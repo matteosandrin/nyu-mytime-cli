@@ -1,4 +1,4 @@
-import browser
+import nyu_mytime_cli.browser
 import click
 import configparser
 import os.path

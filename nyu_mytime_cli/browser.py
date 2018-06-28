@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from helper import *
+from nyu_mytime_cli.helper import *
 import os.path
 import configparser
 import time

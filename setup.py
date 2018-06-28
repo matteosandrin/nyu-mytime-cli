@@ -1,15 +1,15 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
 	name="nyu-mytime-cli",
 	varsion="0.1",
-	py_modules=['nyu_mytime_cli','browser','helper'],
+	packages=find_packages(),
 	install_requires=[
 		'click',
 		'selenium'
 	],
 	entry_points='''
 		[console_scripts]
-		nyu-mytime=nyu_mytime_cli:cli
+		nyu-mytime=nyu_mytime_cli.nyu_mytime_cli:cli
 	''',
 )
