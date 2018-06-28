@@ -21,13 +21,15 @@ if "PASSWORD" in config["DEFAULT"]:
 if "MFA_METHOD" in config["DEFAULT"]:
 	MFA_METHOD = config["DEFAULT"]["MFA_METHOD"]
 
+if "CHROMEDRIVER_URL" in config["DEFAULT"]:
+	CHROMEDRIVER_URL = config["DEFAULT"]["CHROMEDRIVER_URL"]
+
 
 def load_chrome_driver():
 	chrome_options = Options()
-	# chrome_options.add_argument("--headless")
+	chrome_options.add_argument("--headless")
 	chrome_options.add_argument("window-size=1920x1080")
-	chrome_driver = os.getcwd() + "/chromedriver"
-	driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=chrome_driver)
+	driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=CHROMEDRIVER_URL)
 	driver.implicitly_wait(10)
 	return driver
 
@@ -103,6 +105,7 @@ def punch(direction):
 	punch_button.click()
 	result = print_punch_status(driver)
 	print(result)
+	driver.close()
 
 def punch_in():	
 	punch("in")
