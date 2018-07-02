@@ -2,5 +2,5 @@ __pycache__
 html
 venv
 chromedriver
-nyu_mytime_cli.egg-info
+nyumytimecli.egg-info
 .pytest_cache
