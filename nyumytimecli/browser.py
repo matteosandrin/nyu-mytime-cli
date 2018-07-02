@@ -37,12 +37,15 @@ def load_chrome_driver():
 	driver.implicitly_wait(1)
 	return driver
 
-def switch_iframe(iframe_id, driver):
-	frame = while_find_element("#{}".format(iframe_id),driver, timeout=10)
-	if frame is None:
+def get_to_webclock(driver):
+	if login(driver):
+		switch_iframe("EntryFrame", driver)
+		webclock_button = driver.find_element_by_link_text("Go to WebClock")
+		webclock_button.click()
+		return True
+	else:
+		driver.quit()
 		return False
-	driver.switch_to_frame(frame)
-	return True
 
 def login(driver):
 
@@ -95,6 +98,13 @@ def check_successful_login(driver):
 	except:
 		return True # Successful login
 
+def switch_iframe(iframe_id, driver):
+	frame = while_find_element("#{}".format(iframe_id),driver, timeout=10)
+	if frame is None:
+		return False
+	driver.switch_to_frame(frame)
+	return True
+
 def check_successful_mfa(driver):
 	start = time.time()
 	seconds = range(30,0,-1)
@@ -113,16 +123,6 @@ def check_successful_mfa(driver):
 				return True
 			time.sleep(1)
 	return False
-
-def get_to_webclock(driver):
-	if login(driver):
-		switch_iframe("EntryFrame", driver)
-		webclock_button = driver.find_element_by_link_text("Go to WebClock")
-		webclock_button.click()
-		return True
-	else:
-		driver.quit()
-		return False
 
 def print_punch_status(driver):
 
