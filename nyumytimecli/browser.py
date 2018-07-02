@@ -1,5 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from nyumytimecli.helper import *
 import os.path
 import configparser
@@ -21,15 +24,15 @@ if "PASSWORD" in config["DEFAULT"]:
 if "MFA_METHOD" in config["DEFAULT"]:
 	MFA_METHOD = config["DEFAULT"]["MFA_METHOD"]
 
-if "CHROMEDRIVER_URL" in config["DEFAULT"]:
-	CHROMEDRIVER_URL = config["DEFAULT"]["CHROMEDRIVER_URL"]
+if "CHROMEDRIVER_PATH" in config["DEFAULT"]:
+	CHROMEDRIVER_PATH = config["DEFAULT"]["CHROMEDRIVER_PATH"]
 
 
 def load_chrome_driver():
 	chrome_options = Options()
 	chrome_options.add_argument("--headless")
 	chrome_options.add_argument("window-size=1920x1080")
-	driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=CHROMEDRIVER_URL)
+	driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=CHROMEDRIVER_PATH)
 	driver.implicitly_wait(10)
 	return driver
 
@@ -83,10 +86,25 @@ def get_to_webclock(driver):
 		webclock_button.click()
 
 def print_punch_status(driver):
-	status = while_find_element("#transientMessageContainer",driver)
-	message_box = status.find_element_by_css_selector(".x-box-middle-center")
-	message = message_box.find_element_by_css_selector("div[id^=\"ext-gen\"]")
-	return message.text
+
+	try:
+		status = WebDriverWait(driver, 10).until(
+			EC.presence_of_element_located((By.ID, "transientMessageContainer"))
+		)
+		
+		with open(os.path.dirname(os.path.abspath(__file__)) + "/../html/page_source.html", "w") as source_file:
+			source = driver.page_source
+			source_file.write(source)
+
+		# print("<{} id='{}'>".format(status.tag_name, status.get_attribute("id")))
+		message_box = status.find_element_by_css_selector(".x-box-middle-center")
+		# print("<{} class='{}'>".format(message_box.tag_name, message_box.get_attribute("class")))
+		message = message_box.find_element_by_css_selector("div[id^=\"ext-gen\"]")
+		# print("<{} id='{}'>".format(message.tag_name, message.get_attribute("id")))
+		# print(message.text)
+		return message.text
+	finally:
+		driver.quit()
 
 def punch(direction):
 
@@ -105,10 +123,15 @@ def punch(direction):
 	punch_button.click()
 	result = print_punch_status(driver)
 	print(result)
-	driver.close()
+	driver.quit()
 
 def punch_in():	
 	punch("in")
 
 def punch_out():
 	punch("out")
+
+def print_punch_test():
+	driver = load_chrome_driver()
+	driver.get("file:///Users/matteosandrin/.fuck-you-virtual-env/nyu-mytime-cli/html/transient2.html")
+	print_punch_status(driver)

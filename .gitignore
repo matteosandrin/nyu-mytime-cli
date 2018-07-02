@@ -3,3 +3,4 @@ html
 venv
 chromedriver
 nyu_mytime_cli.egg-info
+.pytest_cache
