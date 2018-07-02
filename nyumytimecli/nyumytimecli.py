@@ -51,15 +51,19 @@ def cli():
 def punchin():
 	check_config_file()
 	click.secho("[info] Performing punch-in operation...")
-	browser.punch_in()
-	click.secho("[ ok ] Punch-in operation successful.", fg='green')
+	if browser.punch_in():
+		click.secho("[ ok ] Punch-in operation successful.", fg='green')
+	else:
+		click.secho("[error] Punch-in operation failed.", fg='red')
 
 @click.command(name="out", help="Punch out of the MyTime portal.")
 def punchout():
 	check_config_file()
 	click.secho("[info] Performing punch-out operation...")
-	browser.punch_out()
-	click.secho("[ ok ] Punch-out operation successful.", fg='green')
+	if browser.punch_out():
+		click.secho("[ ok ] Punch-out operation successful.", fg='green')
+	else:
+		click.secho("[error] Punch-out operation failed.", fg='red')
 
 @click.command(name="config", help="Set config variables.")
 @click.argument("var_name", nargs=1, default=None, required=False)

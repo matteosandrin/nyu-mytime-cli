@@ -34,12 +34,15 @@ def load_chrome_driver():
 	chrome_options.add_argument("--headless")
 	chrome_options.add_argument("window-size=1920x1080")
 	driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=CHROMEDRIVER_PATH)
-	driver.implicitly_wait(10)
+	driver.implicitly_wait(1)
 	return driver
 
 def switch_iframe(iframe_id, driver):
-	frame = while_find_element("#{}".format(iframe_id),driver)
+	frame = while_find_element("#{}".format(iframe_id),driver, timeout=10)
+	if frame is None:
+		return False
 	driver.switch_to_frame(frame)
+	return True
 
 def login(driver):
 
@@ -55,15 +58,21 @@ def login(driver):
 
 	click.secho("[info] Attempting to login...")
 
-	switch_iframe("duo_iframe", driver)	
+	if not check_successful_login(driver):
+		click.secho("[error] Login failed: incorrect credentials.",fg='red')
+		return False
 
 	click.secho("[ ok ] Credentials accepted.", fg='green')
 
+	if not switch_iframe("duo_iframe", driver):
+		click.secho("[error] Failed to identify 2FA window", fg='red')
+		return False
+
 	if MFA_METHOD == 'push':
-		auth_div = while_find_element(".row-label",driver)
+		auth_div = driver.find_element_by_css_selector(".row-label")
 		click.secho("[info] Sending push notification to your device...")
 	elif MFA_METHOD == 'call':
-		auth_div = while_find_element(".row-label",driver)
+		auth_div = driver.find_element_by_css_selector(".row-label")
 		click.secho("[info] Sending verification call to your device...")
 	else:
 		click.secho("[error] Invalid MFA method: "+MFA_METHOD, fg='red')
@@ -72,12 +81,37 @@ def login(driver):
 	push_button = auth_div.find_element_by_css_selector("button[type=submit]")
 	push_button.click()
 
+	if not check_successful_mfa(driver):
+		click.secho("[error] MFA authentication failed.", fg='red')
+		return False
+
+	click.secho("[ ok ] MFA authentication successful.", fg='green')
+	return True
+
+def check_successful_login(driver):
+	try:
+		check_element = driver.find_element_by_css_selector("div[id=loginError]")
+		return False
+	except:
+		return True # Successful login
+
+def check_successful_mfa(driver):
 	start = time.time()
-	while time.time() - start < 60:
-		if driver.title == "Home":
-			click.secho("[ ok ] Login successful!", fg='green')
-			return True
-	click.secho("[error] Login failed.", fg='red')
+	seconds = range(30,0,-1)
+
+	bar_style = {
+		"iterable": seconds,
+		"show_percent" : False,
+		"show_eta" : False,
+		"item_show_func" : (lambda x: "[info] {}s remaining to authenticate...\n".format(x)),
+		"bar_template": "%(info)s"
+	}
+
+	with click.progressbar(**bar_style) as bar:
+		for s in bar:
+			if driver.title == "Home":
+				return True
+			time.sleep(1)
 	return False
 
 def get_to_webclock(driver):
@@ -85,6 +119,10 @@ def get_to_webclock(driver):
 		switch_iframe("EntryFrame", driver)
 		webclock_button = driver.find_element_by_link_text("Go to WebClock")
 		webclock_button.click()
+		return True
+	else:
+		driver.quit()
+		return False
 
 def print_punch_status(driver):
 
@@ -119,19 +157,21 @@ def punch(direction):
 		return
 
 	driver = load_chrome_driver()
-	get_to_webclock(driver)
-	punch_button = while_find_element(button_id, driver)
-	punch_button.click()
-	result = print_punch_status(driver)
-	click.secho("[info] "+result)
+	if get_to_webclock(driver):
+		punch_button = while_find_element(button_id, driver)
+		punch_button.click()
+		result = print_punch_status(driver)
+		click.secho("[info] "+result)
+		driver.quit()
+		return True
 	driver.quit()
-	click.secho("[info] Goodbye!")
+	return False
 
 def punch_in():	
-	punch("in")
+	return punch("in")
 
 def punch_out():
-	punch("out")
+	return punch("out")
 
 def print_punch_test():
 	driver = load_chrome_driver()
