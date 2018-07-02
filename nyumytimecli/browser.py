@@ -8,6 +8,7 @@ import os.path
 import configparser
 import time
 import base64
+import click
 
 config = configparser.ConfigParser()
 config.read(os.path.dirname(os.path.abspath(__file__)) + '/config.ini')
@@ -52,20 +53,20 @@ def login(driver):
 	password_field.send_keys(PASSWORD)
 	login_button.click()
 
-	print("Attempting to login...")
+	click.secho("[info] Attempting to login...")
 
 	switch_iframe("duo_iframe", driver)	
 
-	print("Credentials accepted.")
+	click.secho("[ ok ] Credentials accepted.", fg='green')
 
 	if MFA_METHOD == 'push':
 		auth_div = while_find_element(".row-label",driver)
-		print("Sending push notification to your device...")
+		click.secho("[info] Sending push notification to your device...")
 	elif MFA_METHOD == 'call':
 		auth_div = while_find_element(".row-label",driver)
-		print("Sending verification call to your device...")
+		click.secho("[info] Sending verification call to your device...")
 	else:
-		print("Invalid MFA method:",MFA_METHOD)
+		click.secho("[error] Invalid MFA method: "+MFA_METHOD, fg='red')
 		return False
 
 	push_button = auth_div.find_element_by_css_selector("button[type=submit]")
@@ -74,9 +75,9 @@ def login(driver):
 	start = time.time()
 	while time.time() - start < 60:
 		if driver.title == "Home":
-			print("Login successful!")
+			click.secho("[ ok ] Login successful!", fg='green')
 			return True
-	print("Login failed.")
+	click.secho("[error] Login failed.", fg='red')
 	return False
 
 def get_to_webclock(driver):
@@ -114,7 +115,7 @@ def punch(direction):
 	elif direction == 'out':
 		button_id = ".OUT_FOR_DAY"
 	else:
-		print("Abort: invalid punch direction")
+		click.secho("[error] Abort: invalid punch direction", fg='red')
 		return
 
 	driver = load_chrome_driver()
@@ -122,8 +123,9 @@ def punch(direction):
 	punch_button = while_find_element(button_id, driver)
 	punch_button.click()
 	result = print_punch_status(driver)
-	print(result)
+	click.secho("[info] "+result)
 	driver.quit()
+	click.secho("[info] Goodbye!")
 
 def punch_in():	
 	punch("in")

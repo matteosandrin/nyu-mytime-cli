@@ -30,4 +30,4 @@ def test_setting_variable_in_config_command(isolated_cli_runner):
 def test_validating_configuration(isolated_cli_runner):
 
 	result = isolated_cli_runner.invoke(nyumytimecli.config)
-	assert result.output == "Config verified.\n"
+	assert result.output == "[ ok ] Config verified.\n"

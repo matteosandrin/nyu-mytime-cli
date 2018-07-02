@@ -33,7 +33,7 @@ def set_config_parameter(name, config, safe=False, options=None, path=None, valu
 
 	if options is not None:
 		if value not in options:
-			click.echo("Invalid option: {}. Choose between {}".format(value, ", ".join(options)))
+			click.secho("[error] Invalid option: {}. Choose between {}".format(value, ", ".join(options)), fg='red')
 			set_config_parameter(name, config, safe=safe, options=options, path=path, value=value)
 
 	config["DEFAULT"][name] = value
@@ -50,16 +50,16 @@ def cli():
 @click.command(name="in", help="Punch into the MyTime portal.")
 def punchin():
 	check_config_file()
-	click.echo("Performing punch-in operation...")
+	click.secho("[info] Performing punch-in operation...")
 	browser.punch_in()
-	click.echo("Punch-in operation performed.")
+	click.secho("[ ok ] Punch-in operation successful.", fg='green')
 
 @click.command(name="out", help="Punch out of the MyTime portal.")
 def punchout():
 	check_config_file()
-	click.echo("Performing punch-out operation...")
+	click.secho("[info] Performing punch-out operation...")
 	browser.punch_out()
-	click.echo("Punch-out operation performed.")
+	click.secho("[ ok ] Punch-out operation successful.", fg='green')
 
 @click.command(name="config", help="Set config variables.")
 @click.argument("var_name", nargs=1, default=None, required=False)
@@ -69,7 +69,7 @@ def config(var_name, config_path):
 
 	if var_name is None:
 		check_config_file()
-		click.echo("Config verified.")
+		click.secho("[ ok ] Config verified.", fg="green")
 	else:
 		config = configparser.ConfigParser()
 		if config_path is None:
@@ -86,7 +86,7 @@ def config(var_name, config_path):
 			else:
 				set_config_parameter(var_name, config, path=config_path)
 		else:
-			click.echo("Invalid variable name:",var_name)
+			click.secho("[error] Invalid variable name: "+var_name, fg='red')
 
 @click.command(name="test", help="Run unit tests.")
 def test():
