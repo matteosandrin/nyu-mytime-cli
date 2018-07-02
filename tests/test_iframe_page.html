@@ -1,0 +1,16 @@
+<iframe id="testFrame" src="about:blank"></iframe>
+<script type="text/javascript">
+	var doc = document.getElementById('testFrame').contentWindow.document;
+	doc.open();
+	doc.write(`
+		<html>
+			<head>
+				<title>This is a test iFrame</title>
+			</head>
+			<body>
+				<div id="testDiv">This is a test</div>
+			</body>
+		</html>
+	`);
+	doc.close();
+</script>
