@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<div id="outerDiv"></div>
+	<script type="text/javascript">
+		var outerDiv = document.getElementById("outerDiv");
+		var testDiv = document.createElement("div");
+		testDiv.setAttribute("id", "testDiv")
+		testDiv.innerHTML = "This is a test";
+		setTimeout(function(){
+			outerDiv.appendChild(testDiv)
+		}, 500);	
+	</script>
+</body>
+</html>
