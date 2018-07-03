@@ -135,13 +135,9 @@ def print_punch_status(driver):
 			source = driver.page_source
 			source_file.write(source)
 
-		# print("<{} id='{}'>".format(status.tag_name, status.get_attribute("id")))
 		message_box = status.find_element_by_css_selector(".x-box-middle-center")
-		# print("<{} class='{}'>".format(message_box.tag_name, message_box.get_attribute("class")))
 		message = message_box.find_element_by_css_selector("div[id^=\"ext-gen\"]")
-		# print("<{} id='{}'>".format(message.tag_name, message.get_attribute("id")))
-		# print(message.text)
-		return message.text
+		return message.get_attribute("innerText")
 	finally:
 		driver.quit()
 
@@ -172,8 +168,3 @@ def punch_in():
 
 def punch_out():
 	return punch("out")
-
-def print_punch_test():
-	driver = load_chrome_driver()
-	driver.get("file:///Users/matteosandrin/.fuck-you-virtual-env/nyu-mytime-cli/html/transient2.html")
-	print_punch_status(driver)

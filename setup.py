@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name="nyumytimecli",
-	varsion="0.1",
+	varsion="1.0",
 	packages=find_packages(),
 	install_requires=[
 		'click',
@@ -12,4 +12,6 @@ setup(
 		[console_scripts]
 		nyu-mytime=nyumytimecli.nyumytimecli:cli
 	''',
+	setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
 )

@@ -18,7 +18,9 @@ def test_presence_of_global_variables():
 def test_printing_punch_out_status(driver):
 	
 	driver.get("file://"+os.path.dirname(os.path.abspath(__file__))+"/test_html/test_status_page.html")
-	assert browser.print_punch_status(driver) == "Thu 06/28 12:03 pm: Out Punch Recorded Successfully."
+	status = browser.print_punch_status(driver)
+	status = status.replace(u'\xa0', u' ')
+	assert status == "Thu 06/28 12:03 pm: Out Punch Recorded Successfully."
 	driver.quit()
 
 def test_iframe_switching(driver):

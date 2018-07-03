@@ -25,7 +25,6 @@ def set_config_parameter(name, config, safe=False, options=None, path=None, valu
 	if options is not None:
 		options_text = " [ {} ]".format(" / ".join(options))
 
-	# if value is None:
 	value = click.prompt("Please set the {} parameter{}".format(name,options_text), type=str, hide_input=safe)
 	
 	if safe:
@@ -68,7 +67,6 @@ def punchout():
 @click.command(name="config", help="Set config variables.")
 @click.argument("var_name", nargs=1, default=None, required=False)
 @click.option("--config-path", nargs=1, default=None)
-# @click.option("--value", nargs=1, default=None, prompt="Enter the value to assign the variable")
 def config(var_name, config_path):
 
 	if var_name is None:
@@ -92,11 +90,6 @@ def config(var_name, config_path):
 		else:
 			click.secho("[error] Invalid variable name: "+var_name, fg='red')
 
-@click.command(name="test", help="Run unit tests.")
-def test():
-	browser.print_punch_test()
-
 cli.add_command(punchin)
 cli.add_command(punchout)
 cli.add_command(config)
-cli.add_command(test)

@@ -4,3 +4,4 @@ venv
 chromedriver
 nyumytimecli.egg-info
 .pytest_cache
+.eggs
