@@ -1,0 +1,6 @@
+include README.md
+include LICENSE.txt
+include nyumytimecli/config.ini
+include tests
+include tests/*
+include tests/test_html/*

@@ -5,3 +5,5 @@ chromedriver
 nyumytimecli.egg-info
 .pytest_cache
 .eggs
+dist
+build

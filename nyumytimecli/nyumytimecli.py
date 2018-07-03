@@ -4,19 +4,22 @@ import configparser
 import os.path
 import base64
 
-def check_config_file():
+def check_config_file(config_path=None):
 	config = configparser.ConfigParser()
-	config.read(os.path.dirname(os.path.abspath(__file__)) + '/config.ini')
+	if config_path is None:
+		config_path = os.path.dirname(os.path.abspath(__file__)) + "/config.ini"
+	config.read(config_path)
+		
 	default = config["DEFAULT"]
 
 	if ("USERNAME" not in default or len(default["USERNAME"]) == 0):
-		set_config_parameter("USERNAME", config)
+		set_config_parameter("USERNAME", config, path=config_path)
 
 	if ("PASSWORD" not in default or len(default["PASSWORD"]) == 0):
-		set_config_parameter("PASSWORD", config, safe=True)
+		set_config_parameter("PASSWORD", config, safe=True, path=config_path)
 
 	if ("MFA_METHOD" not in default or len(default["MFA_METHOD"]) == 0):
-		set_config_parameter("MFA_METHOD", config, options=['push', 'call'])
+		set_config_parameter("MFA_METHOD", config, options=['push', 'call'], path=config_path)
 
 
 def set_config_parameter(name, config, safe=False, options=None, path=None, value=None):
@@ -70,7 +73,7 @@ def punchout():
 def config(var_name, config_path):
 
 	if var_name is None:
-		check_config_file()
+		check_config_file(config_path=config_path)
 		click.secho("[ ok ] Config verified.", fg="green")
 	else:
 		config = configparser.ConfigParser()

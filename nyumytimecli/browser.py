@@ -130,11 +130,6 @@ def print_punch_status(driver):
 		status = WebDriverWait(driver, 10).until(
 			EC.presence_of_element_located((By.ID, "transientMessageContainer"))
 		)
-		
-		with open(os.path.dirname(os.path.abspath(__file__)) + "/../html/page_source.html", "w") as source_file:
-			source = driver.page_source
-			source_file.write(source)
-
 		message_box = status.find_element_by_css_selector(".x-box-middle-center")
 		message = message_box.find_element_by_css_selector("div[id^=\"ext-gen\"]")
 		return message.get_attribute("innerText")

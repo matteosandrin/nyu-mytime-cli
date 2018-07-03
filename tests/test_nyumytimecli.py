@@ -12,6 +12,7 @@ def isolated_cli_runner():
 			config_file.write("""
 				[DEFAULT]
 				login_url = https://test.url
+				chromedriver_path = /usr/local/bin/chromedriver
 				username = testUser
 				password = testPassword
 				mfa_method = testMethod
@@ -29,5 +30,5 @@ def test_setting_variable_in_config_command(isolated_cli_runner):
 
 def test_validating_configuration(isolated_cli_runner):
 
-	result = isolated_cli_runner.invoke(nyumytimecli.config)
+	result = isolated_cli_runner.invoke(nyumytimecli.config,["--config-path", "config-test.ini"])
 	assert result.output == "[ ok ] Config verified.\n"
